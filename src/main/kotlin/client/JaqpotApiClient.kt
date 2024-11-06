@@ -3,11 +3,14 @@ package org.jaqpot.client
 import client.BaseApiClient
 import okhttp3.OkHttpClient
 import org.jaqpot.config.SDKConfig
+import org.jaqpot.exception.JaqpotSDKException
 import org.jaqpot.kotlinsdk.api.DatasetApi
 import org.jaqpot.kotlinsdk.api.ModelApi
 import org.jaqpot.kotlinsdk.model.Dataset
 import org.jaqpot.kotlinsdk.model.DatasetType
 import org.openapitools.client.infrastructure.ApiResponse
+import org.openapitools.client.infrastructure.ClientError
+import org.openapitools.client.infrastructure.ResponseType
 
 class JaqpotApiClient(
     private val apiKey: String,
@@ -31,6 +34,18 @@ class JaqpotApiClient(
             modelId,
             Dataset(type = DatasetType.PREDICTION, entryType = Dataset.EntryType.ARRAY, input)
         )
+
+        if (response.responseType == ResponseType.ClientError) {
+            if (response.statusCode === 403) {
+                throw JaqpotSDKException("Prediction failed: Unauthorized")
+            } else if (response.statusCode === 404) {
+                throw JaqpotSDKException("Prediction failed: Model not found")
+            }
+
+            val body: Any? = (response as ClientError).body
+            throw JaqpotSDKException("Prediction failed: ${body.toString()}")
+        }
+
         val datasetLocation = response.headers["Location"]!!.first()
         val datasetId = datasetLocation.substringAfterLast("/").toLong()
 
@@ -48,11 +63,11 @@ class JaqpotApiClient(
         }
 
         if (retries >= 10) {
-            throw Exception("Prediction failed")
+            throw JaqpotSDKException("Prediction failed: Maximum amount of retries reached")
         }
 
         if (dataset!!.status == Dataset.Status.FAILURE) {
-            throw Exception("Prediction failed")
+            throw JaqpotSDKException("Prediction failed")
         }
 
         return dataset

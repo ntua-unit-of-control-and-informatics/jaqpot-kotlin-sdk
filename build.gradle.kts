@@ -108,7 +108,7 @@ tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
 sourceSets {
     main {
         kotlin {
-            srcDir("${buildDir}/openapi")
+            srcDir("${buildDir}/openapi/src/main/kotlin/org")
         }
     }
 }
