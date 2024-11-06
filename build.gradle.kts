@@ -5,7 +5,7 @@ plugins {
     `java-library`
     `maven-publish`
     signing
-    id("org.openapi.generator") version "7.2.0"
+    id("org.openapi.generator") version "7.9.0"
 }
 
 group = "org.jaqpot.kotlinsdk"
@@ -22,8 +22,16 @@ dependencies {
     implementation("com.squareup.retrofit2:retrofit:2.9.0")
     implementation("com.squareup.retrofit2:converter-moshi:2.9.0")
 
+    // coroutines
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.9.0")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor:1.9.0")
+
     testImplementation("org.junit.jupiter:junit-jupiter:5.10.0")
     testImplementation("com.squareup.okhttp3:mockwebserver:4.12.0")
+}
+
+tasks.compileKotlin {
+    dependsOn(tasks.openApiGenerate)
 }
 
 java {
@@ -35,15 +43,18 @@ java {
 
 openApiGenerate {
     generatorName.set("kotlin")
-    inputSpec.set("$rootDir../jaqpot-api/src/main/resources/openapi.yaml")
-    outputDir.set("$buildDir/generated")
+    inputSpec.set("$rootDir/../../jaqpot-api/src/main/resources/openapi.yaml")
+    outputDir.set("${buildDir}/openapi")
     apiPackage.set("org.jaqpot.kotlinsdk.api")
     modelPackage.set("org.jaqpot.kotlinsdk.model")
-    configOptions.set(mapOf(
-        "dateLibrary" to "java8",
-        "useCoroutines" to "false",
-        "serializationLibrary" to "moshi"
-    ))
+    configOptions.set(
+        mapOf(
+            "dateLibrary" to "java8",
+            "useCoroutines" to "false",
+            "enumPropertyNaming" to "UPPERCASE",
+            "serializationLibrary" to "moshi"
+        )
+    )
 }
 
 publishing {
@@ -91,5 +102,13 @@ tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
     kotlinOptions {
         jvmTarget = "11"
         freeCompilerArgs = listOf("-Xjsr305=strict")
+    }
+}
+
+sourceSets {
+    main {
+        kotlin {
+            srcDir("${buildDir}/openapi")
+        }
     }
 }
