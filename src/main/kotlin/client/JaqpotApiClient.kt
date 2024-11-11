@@ -1,63 +1,86 @@
 package org.jaqpot.client
 
 import client.BaseApiClient
-import okhttp3.OkHttpClient
+import com.google.gson.Gson
+import com.google.gson.GsonBuilder
 import org.jaqpot.config.SDKConfig
 import org.jaqpot.exception.JaqpotSDKException
-import org.jaqpot.kotlinsdk.api.DatasetApi
-import org.jaqpot.kotlinsdk.api.ModelApi
-import org.jaqpot.kotlinsdk.model.Dataset
-import org.jaqpot.kotlinsdk.model.DatasetType
-import org.openapitools.client.infrastructure.ApiResponse
-import org.openapitools.client.infrastructure.ClientError
-import org.openapitools.client.infrastructure.ResponseType
+import org.openapitools.client.JSON.OffsetDateTimeTypeAdapter
+import org.openapitools.client.api.DatasetApi
+import org.openapitools.client.api.ModelApi
+import org.openapitools.client.model.Dataset
+import org.openapitools.client.model.DatasetType
+import retrofit2.Call
+import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
+import java.time.OffsetDateTime
+
 
 class JaqpotApiClient(
     private val apiKey: String,
-    private val apiSecret: String
+    private val apiSecret: String,
+    private val baseUrl: String = SDKConfig.host,
+    private val gson: Gson = GsonBuilder()
+        .registerTypeAdapter(OffsetDateTime::class.java, OffsetDateTimeTypeAdapter())
+        .create(),
+    private val retrofit: Retrofit = Retrofit.Builder()
+        .baseUrl(baseUrl)
+        .client(getHttpClient(apiKey, apiSecret))
+        .addConverterFactory(GsonConverterFactory.create(gson))
+        .build(),
+    private val modelApi: ModelApi = retrofit.create(ModelApi::class.java),
+    private val datasetApi: DatasetApi = retrofit.create(DatasetApi::class.java)
 ) : BaseApiClient() {
 
-    private val baseUrl: String = SDKConfig.host
-    private val httpClient: OkHttpClient = getApiClient(apiKey, apiSecret)
-    private val modelApi: ModelApi = ModelApi(baseUrl, httpClient)
-    private val datasetApi: DatasetApi = DatasetApi(baseUrl, httpClient)
+    companion object {
+        const val DATASET_CHECK_INTERVAL: Long = 2000
+    }
 
-    suspend fun predictAsync(modelId: Long, input: List<Any>): ApiResponse<Unit?> {
-        return modelApi.predictWithModelWithHttpInfo(
+    fun predictAsync(modelId: Long, input: List<Any>): Call<Void>? {
+        return modelApi.predictWithModel(
             modelId,
-            Dataset(type = DatasetType.PREDICTION, entryType = Dataset.EntryType.ARRAY, input)
+            Dataset.Builder().type(DatasetType.PREDICTION)
+                .entryType(Dataset.EntryTypeEnum.ARRAY)
+                .input(input)
+                .build()
         )
     }
 
-    suspend fun predictSync(modelId: Long, input: List<Any>): Dataset {
-        val response = modelApi.predictWithModelWithHttpInfo(
+    fun predictSync(modelId: Long, input: List<Any>): Dataset {
+        val response = modelApi.predictWithModel(
             modelId,
-            Dataset(type = DatasetType.PREDICTION, entryType = Dataset.EntryType.ARRAY, input)
-        )
+            Dataset.Builder().type(DatasetType.PREDICTION)
+                .entryType(Dataset.EntryTypeEnum.ARRAY)
+                .input(input)
+                .build()
+        ).execute()
 
-        if (response.responseType == ResponseType.ClientError) {
-            if (response.statusCode === 403) {
+        if (!response.isSuccessful) {
+            if (response.code() == 403) {
                 throw JaqpotSDKException("Prediction failed: Unauthorized")
-            } else if (response.statusCode === 404) {
+            } else if (response.code() == 404) {
                 throw JaqpotSDKException("Prediction failed: Model not found")
             }
 
-            val body: Any? = (response as ClientError).body
-            throw JaqpotSDKException("Prediction failed: ${body.toString()}")
+            throw JaqpotSDKException("Prediction failed: ${response.message()}")
         }
 
-        val datasetLocation = response.headers["Location"]!!.first()
+        val datasetLocation = response.headers()["Location"]!!
         val datasetId = datasetLocation.substringAfterLast("/").toLong()
 
         var dataset: Dataset? = null
 
         var retries = 0
         while (retries < 10) {
-            dataset = datasetApi.getDatasetById(datasetId)
-            if (dataset.status == Dataset.Status.SUCCESS || dataset.status == Dataset.Status.FAILURE) {
+            dataset = datasetApi.getDatasetById(datasetId).execute().body()
+            if (dataset == null) {
+                throw JaqpotSDKException("Prediction failed: Dataset not found")
+            }
+            if (dataset.status == Dataset.StatusEnum.SUCCESS || dataset.status == Dataset.StatusEnum.FAILURE) {
                 break
             }
-            Thread.sleep(2000)
+
+            Thread.sleep(DATASET_CHECK_INTERVAL)
 
             retries++
         }
@@ -66,10 +89,12 @@ class JaqpotApiClient(
             throw JaqpotSDKException("Prediction failed: Maximum amount of retries reached")
         }
 
-        if (dataset!!.status == Dataset.Status.FAILURE) {
+        if (dataset!!.status == Dataset.StatusEnum.FAILURE) {
             throw JaqpotSDKException("Prediction failed")
         }
 
         return dataset
     }
+
+
 }
