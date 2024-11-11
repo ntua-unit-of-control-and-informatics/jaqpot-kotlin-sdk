@@ -16,22 +16,42 @@ repositories {
 }
 
 dependencies {
-    implementation("com.squareup.okhttp3:okhttp:4.12.0")
-    implementation("com.squareup.moshi:moshi:1.15.0")
-    implementation("com.squareup.moshi:moshi-kotlin:1.15.0")
-    implementation("com.squareup.retrofit2:retrofit:2.9.0")
-    implementation("com.squareup.retrofit2:converter-moshi:2.9.0")
+    implementation("com.squareup.retrofit2:retrofit:2.11.0")
+    implementation("com.squareup.retrofit2:converter-gson:2.11.0")
+    implementation("com.squareup.retrofit2:converter-scalars:2.11.0")
 
-    // coroutines
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.9.0")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor:1.9.0")
+    implementation("jakarta.validation:jakarta.validation-api:3.1.0")
+    implementation("jakarta.annotation:jakarta.annotation-api:3.0.0")
+
+    implementation("io.gsonfire:gson-fire:1.9.0")
+    implementation("org.apache.oltu.oauth2:org.apache.oltu.oauth2.client:1.0.1")
+    implementation("org.json:json:20231013")
+
+    implementation("com.squareup.okio:okio:3.4.0")
 
     testImplementation("org.junit.jupiter:junit-jupiter:5.10.0")
     testImplementation("com.squareup.okhttp3:mockwebserver:4.12.0")
 }
 
+tasks.register<Copy>("filterOpenApiSpec") {
+    from("$rootDir/../jaqpot-api/src/main/resources/openapi.yaml")
+    into("$buildDir/tmp")
+    filter { line ->
+        // Remove the x-field-extra-annotation line
+        if (line.contains("x-field-extra-annotation:")) {
+            ""
+        } else {
+            line
+        }
+    }
+}
+
 tasks.compileKotlin {
     dependsOn(tasks.openApiGenerate)
+}
+
+tasks.openApiGenerate {
+    mustRunAfter("filterOpenApiSpec")
 }
 
 java {
@@ -41,18 +61,18 @@ java {
     targetCompatibility = JavaVersion.VERSION_11
 }
 
+
 openApiGenerate {
-    generatorName.set("kotlin")
-    inputSpec.set("$rootDir/../../jaqpot-api/src/main/resources/openapi.yaml")
-    outputDir.set("${buildDir}/openapi")
-    apiPackage.set("org.jaqpot.kotlinsdk.api")
-    modelPackage.set("org.jaqpot.kotlinsdk.model")
+    generatorName.set("java")
+    inputSpec.set("$buildDir/tmp/openapi.yaml")
+    outputDir.set("${buildDir}")
     configOptions.set(
         mapOf(
-            "dateLibrary" to "java8",
-            "useCoroutines" to "false",
-            "enumPropertyNaming" to "UPPERCASE",
-            "serializationLibrary" to "moshi"
+            "generateBuilders" to "true",
+            "library" to "retrofit2",
+            "hideGenerationTimestamp" to "true",
+            "useJakartaEe" to "true",
+            "openApiNullable" to "false"
         )
     )
 }
@@ -107,8 +127,8 @@ tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
 
 sourceSets {
     main {
-        kotlin {
-            srcDir("${buildDir}/openapi/src/main/kotlin/org")
+        java {
+            srcDir("${buildDir}/src/main/java")
         }
     }
 }
