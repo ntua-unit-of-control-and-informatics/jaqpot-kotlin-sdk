@@ -1,7 +1,7 @@
 package org.jaqpot
 
-import org.jaqpot.client.JaqpotApiClient
+import org.jaqpot.client.ModelApiClient
 
 fun main() {
-    JaqpotApiClient("1", "2").predictSync(1, listOf(1, 2, 3))
+    ModelApiClient("1", "2").predictSync(1, listOf(1, 2, 3))
 }

@@ -1,36 +1,23 @@
 package org.jaqpot.client
 
 import client.BaseApiClient
-import com.google.gson.Gson
-import com.google.gson.GsonBuilder
 import org.jaqpot.config.SDKConfig
 import org.jaqpot.exception.JaqpotSDKException
-import org.openapitools.client.JSON.OffsetDateTimeTypeAdapter
 import org.openapitools.client.api.DatasetApi
 import org.openapitools.client.api.ModelApi
 import org.openapitools.client.model.Dataset
 import org.openapitools.client.model.DatasetType
 import retrofit2.Call
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
-import java.time.OffsetDateTime
 
 
-class JaqpotApiClient(
-    private val apiKey: String,
-    private val apiSecret: String,
-    private val baseUrl: String = SDKConfig.host,
-    private val gson: Gson = GsonBuilder()
-        .registerTypeAdapter(OffsetDateTime::class.java, OffsetDateTimeTypeAdapter())
-        .create(),
-    private val retrofit: Retrofit = Retrofit.Builder()
-        .baseUrl(baseUrl)
-        .client(getHttpClient(apiKey, apiSecret))
-        .addConverterFactory(GsonConverterFactory.create(gson))
-        .build(),
-    private val modelApi: ModelApi = retrofit.create(ModelApi::class.java),
+class ModelApiClient(
+    apiKey: String,
+    apiSecret: String,
+    baseUrl: String = SDKConfig.host
+) : BaseApiClient(apiKey, apiSecret, baseUrl) {
+
+    private val modelApi: ModelApi = retrofit.create(ModelApi::class.java)
     private val datasetApi: DatasetApi = retrofit.create(DatasetApi::class.java)
-) : BaseApiClient() {
 
     companion object {
         const val DATASET_CHECK_INTERVAL: Long = 2000
@@ -93,11 +80,10 @@ class JaqpotApiClient(
         }
 
         if (dataset!!.status == Dataset.StatusEnum.FAILURE) {
-            throw JaqpotSDKException("Prediction failed")
+            throw JaqpotSDKException("Prediction failed: ${dataset.failureReason}")
         }
 
         return dataset
     }
-
 
 }
