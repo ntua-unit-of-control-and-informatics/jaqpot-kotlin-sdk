@@ -56,13 +56,16 @@ class JaqpotApiClient(
         ).execute()
 
         if (!response.isSuccessful) {
-            if (response.code() == 403) {
-                throw JaqpotSDKException("Prediction failed: Unauthorized")
+            val message = response.errorBody()?.string();
+            if (response.code() == 401) {
+                throw JaqpotSDKException("Prediction failed: Unauthenticated \n$message", response.errorBody())
+            } else if (response.code() == 403) {
+                throw JaqpotSDKException("Prediction failed: Unauthorized \n$message", response.errorBody())
             } else if (response.code() == 404) {
-                throw JaqpotSDKException("Prediction failed: Model not found")
+                throw JaqpotSDKException("Prediction failed: Model not found\n$message", response.errorBody())
             }
 
-            throw JaqpotSDKException("Prediction failed: ${response.message()}")
+            throw JaqpotSDKException("Prediction failed: $message", response.errorBody())
         }
 
         val datasetLocation = response.headers()["Location"]!!
