@@ -37,5 +37,6 @@ jobs:
           GPG_KEY_ID: ${{ secrets.GPG_KEY_ID }}
           GPG_SIGNING_PASSWORD: ${{ secrets.GPG_SIGNING_PASSWORD }}
         run: |
+          ./gradlew downloadOpenApiSpec
           ./gradlew build
           ./gradlew publishToSonatype closeSonatypeStagingRepository

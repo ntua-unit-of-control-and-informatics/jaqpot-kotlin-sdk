@@ -65,7 +65,7 @@ tasks.compileKotlin {
 }
 
 tasks.openApiGenerate {
-    mustRunAfter("filterOpenApiSpec")
+    mustRunAfter("downloadOpenApiSpec")
 }
 
 java {
@@ -75,7 +75,7 @@ java {
     targetCompatibility = JavaVersion.VERSION_11
 }
 
-tasks.register("filterOpenApiSpec") {
+tasks.register("downloadOpenApiSpec") {
     doLast {
         // Create temporary directory if it doesn't exist
         val tmpDir = file("${layout.buildDirectory.get()}/tmp")
