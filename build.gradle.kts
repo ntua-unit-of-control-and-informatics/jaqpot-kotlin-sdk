@@ -1,5 +1,3 @@
-import java.util.*
-
 // build.gradle.kts
 
 plugins {
@@ -161,10 +159,9 @@ publishing {
 }
 
 signing {
-    val signingKeyId = System.getenv("JRELEASER_GPG_PUBLIC_KEY")
-    val signingKey = Base64.getDecoder().decode(System.getenv("JRELEASER_GPG_SECRET_KEY"))
-    val signingPassword = Base64.getDecoder().decode(System.getenv("JRELEASER_GPG_PASSPHRASE"))
-    useInMemoryPgpKeys(signingKeyId, String(signingKey), String(signingPassword))
+    val signingKey = System.getenv("JRELEASER_GPG_SECRET_KEY")
+    val signingPassword = System.getenv("JRELEASER_GPG_PASSPHRASE")
+    useInMemoryPgpKeys(signingKey, signingPassword)
     sign(publishing.publications["mavenJava"])
 }
 
