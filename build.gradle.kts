@@ -143,6 +143,11 @@ publishing {
                         email.set("upci.ntua@gmail.com")
                     }
                 }
+                scm {
+                    connection.set("scm:git:git://github.com/ntua-unit-of-control-and-informatics/jaqpot-kotlin-sdk.git")
+                    developerConnection.set("scm:git:ssh://github.com:ntua-unit-of-control-and-informatics/jaqpot-kotlin-sdk.git")
+                    url.set("https://github.com/ntua-unit-of-control-and-informatics/jaqpot-kotlin-sdk")
+                }
             }
         }
     }
