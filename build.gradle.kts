@@ -84,9 +84,6 @@ jreleaser {
     signing {
         setActive("ALWAYS")
         armored = true
-        publicKey.set(System.getenv("JRELEASER_GPG_PUBLIC_KEY"))
-        secretKey.set(System.getenv("JRELEASER_GPG_SECRET_KEY"))
-        passphrase.set(System.getenv("JRELEASER_GPG_PASSPHRASE"))
     }
     project {
         authors.set(listOf("UPCI NTUA"))
