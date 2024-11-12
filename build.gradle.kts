@@ -1,4 +1,4 @@
-import org.gradle.internal.impldep.jcifs.util.Base64
+import java.util.*
 
 // build.gradle.kts
 
@@ -162,8 +162,8 @@ publishing {
 
 signing {
     val signingKeyId = System.getenv("JRELEASER_GPG_PUBLIC_KEY")
-    val signingKey = Base64.decode(System.getenv("JRELEASER_GPG_SECRET_KEY")).toString(Charsets.UTF_8)
-    val signingPassword = Base64.decode(System.getenv("JRELEASER_GPG_PASSPHRASE")).toString(Charsets.UTF_8)
+    val signingKey = Base64.getDecoder().decode(System.getenv("JRELEASER_GPG_SECRET_KEY")).toString(Charsets.UTF_8)
+    val signingPassword = Base64.getDecoder().decode(System.getenv("JRELEASER_GPG_PASSPHRASE")).toString(Charsets.UTF_8)
     useInMemoryPgpKeys(signingKeyId, signingKey, signingPassword)
     sign(publishing.publications["mavenJava"])
 }
