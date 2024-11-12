@@ -162,9 +162,9 @@ publishing {
 
 signing {
     val signingKeyId = System.getenv("JRELEASER_GPG_PUBLIC_KEY")
-    val signingKey = Base64.getDecoder().decode(System.getenv("JRELEASER_GPG_SECRET_KEY")).toString(Charsets.UTF_8)
-    val signingPassword = Base64.getDecoder().decode(System.getenv("JRELEASER_GPG_PASSPHRASE")).toString(Charsets.UTF_8)
-    useInMemoryPgpKeys(signingKeyId, signingKey, signingPassword)
+    val signingKey = Base64.getDecoder().decode(System.getenv("JRELEASER_GPG_SECRET_KEY"))
+    val signingPassword = Base64.getDecoder().decode(System.getenv("JRELEASER_GPG_PASSPHRASE"))
+    useInMemoryPgpKeys(signingKeyId, String(signingKey), String(signingPassword))
     sign(publishing.publications["mavenJava"])
 }
 
