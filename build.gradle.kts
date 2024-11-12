@@ -91,6 +91,7 @@ jreleaser {
         links {
             homepage = "https://api.jaqpot.org"
         }
+        description.set("An SDK in Kotlin/Java to access the Jaqpot API (https://api.jaqpot.org)")
         inceptionYear = "2024"
     }
 
