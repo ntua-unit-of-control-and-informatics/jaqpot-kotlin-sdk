@@ -102,8 +102,8 @@ jreleaser {
                     setActive("ALWAYS")
                     url.set("https://central.sonatype.com/api/v1/publisher")
                     stagingRepository("target/staging-deploy")
-                    username = System.getenv("SONATYPE_USERNAME")
-                    password = System.getenv("SONATYPE_PASSWORD")
+                    username = System.getenv("JRELEASER_MAVENCENTRAL_USERNAME")
+                    password = System.getenv("JRELEASER_MAVENCENTRAL_TOKEN")
                 }
             }
         }
@@ -111,7 +111,7 @@ jreleaser {
 
 
     distributions {
-        register("app") {
+        register("jaqpot-kotlin-sdk") {
             artifact {
                 path.set(file("build/distributions/{{distributionName}}-{{projectVersion}}.zip"))
             }
@@ -131,15 +131,16 @@ publishing {
                 url.set("https://github.com/ntua-unit-of-control-and-informatics/jaqpot-kotlin-sdk")
                 licenses {
                     license {
-                        name.set("The Apache License, Version 2.0")
-                        url.set("http://www.apache.org/licenses/LICENSE-2.0.txt")
+                        name.set("MIT License")
+                        url.set("https://opensource.org/licenses/MIT")
+                        distribution.set("repo")
                     }
                 }
                 developers {
                     developer {
-                        id.set("your-username")
-                        name.set("Your Name")
-                        email.set("your.email@example.com")
+                        id.set("upci")
+                        name.set("Alex Arvanitidis")
+                        email.set("upci.ntua@gmail.com")
                     }
                 }
             }
