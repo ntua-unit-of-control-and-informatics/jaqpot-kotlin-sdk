@@ -101,7 +101,7 @@ jreleaser {
                 register("app") {
                     setActive("ALWAYS")
                     url.set("https://central.sonatype.com/api/v1/publisher")
-                    stagingRepository("target/staging-deploy")
+                    stagingRepository("${layout.buildDirectory.get()}/staging-deploy")
                     username = System.getenv("SONATYPE_USERNAME")
                     password = System.getenv("SONATYPE_PASSWORD")
                 }
