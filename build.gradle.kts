@@ -168,9 +168,10 @@ publishing {
 }
 
 signing {
-    val signingKey = System.getenv("GPG_SIGNING_KEY") ?: properties["signing.key"].toString()
-    val signingPassword = System.getenv("GPG_SIGNING_PASSWORD") ?: properties["signing.password"].toString()
-    useInMemoryPgpKeys(signingKey, signingPassword)
+    val signingKeyId = System.getenv("GPG_KEY_ID")
+    val signingKey = System.getenv("GPG_SIGNING_KEY")
+    val signingPassword = System.getenv("GPG_SIGNING_PASSWORD")
+    useInMemoryPgpKeys(signingKeyId, signingKey, signingPassword)
     sign(publishing.publications["mavenJava"])
 }
 
