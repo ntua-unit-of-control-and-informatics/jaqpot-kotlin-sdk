@@ -3,9 +3,11 @@
 plugins {
     kotlin("jvm") version "1.9.20"
     `java-library`
+    application
     `maven-publish`
     signing
     id("org.openapi.generator") version "7.9.0"
+    id("org.jreleaser") version "1.15.0"
 }
 
 group = "org.jaqpot.kotlinsdk"
@@ -33,25 +35,22 @@ dependencies {
     testImplementation("com.squareup.okhttp3:mockwebserver:4.12.0")
 }
 
-tasks.register<Copy>("filterOpenApiSpec") {
-    from("$rootDir/../jaqpot-api/src/main/resources/openapi.yaml")
-    into("$buildDir/tmp")
-    filter { line ->
-        // Remove the x-field-extra-annotation line
-        if (line.contains("x-field-extra-annotation:")) {
-            ""
-        } else {
-            line
-        }
-    }
-}
-
 tasks.compileKotlin {
     dependsOn(tasks.openApiGenerate)
 }
+tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
+    kotlinOptions {
+        jvmTarget = "11"
+        freeCompilerArgs = listOf("-Xjsr305=strict")
+    }
+}
 
-tasks.openApiGenerate {
-    mustRunAfter("filterOpenApiSpec")
+sourceSets {
+    main {
+        java {
+            srcDir("${layout.buildDirectory.get()}/src/main/java")
+        }
+    }
 }
 
 java {
@@ -61,11 +60,10 @@ java {
     targetCompatibility = JavaVersion.VERSION_11
 }
 
-
 openApiGenerate {
     generatorName.set("java")
     remoteInputSpec.set("https://raw.githubusercontent.com/ntua-unit-of-control-and-informatics/jaqpot-api/refs/heads/main/src/main/resources/openapi.yaml")
-    outputDir.set("${buildDir}")
+    outputDir.set("${layout.buildDirectory.get()}")
     configOptions.set(
         mapOf(
             "generateBuilders" to "true",
@@ -76,6 +74,46 @@ openApiGenerate {
         )
     )
 }
+
+// Publishing
+jreleaser {
+    signing {
+        setActive("ALWAYS")
+        armored = true
+    }
+    project {
+        authors.set(listOf("UPCI NTUA"))
+        license.set("MIT")
+        links {
+            homepage = "https://api.jaqpot.org"
+        }
+        inceptionYear = "2024"
+    }
+
+    deploy {
+        maven {
+            mavenCentral {
+                register("sonatype") {
+                    setActive("ALWAYS")
+                    url.set("https://central.sonatype.com/api/v1/publisher")
+                    stagingRepository("target/staging-deploy")
+                    username = System.getenv("SONATYPE_USERNAME")
+                    password = System.getenv("SONATYPE_PASSWORD")
+                }
+            }
+        }
+    }
+
+
+    distributions {
+        register("app") {
+            artifact {
+                path.set(file("build/distributions/{{distributionName}}-{{projectVersion}}.zip"))
+            }
+        }
+    }
+}
+
 
 publishing {
     publications {
@@ -118,17 +156,3 @@ signing {
     sign(publishing.publications["mavenJava"])
 }
 
-tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
-    kotlinOptions {
-        jvmTarget = "11"
-        freeCompilerArgs = listOf("-Xjsr305=strict")
-    }
-}
-
-sourceSets {
-    main {
-        java {
-            srcDir("${buildDir}/src/main/java")
-        }
-    }
-}
