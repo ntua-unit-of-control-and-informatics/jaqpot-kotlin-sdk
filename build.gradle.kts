@@ -75,6 +75,10 @@ openApiGenerate {
     )
 }
 
+
+tasks.getByName("openApiGenerate").dependsOn(tasks.named<Jar>("sourcesJar"))
+
+
 // Publishing
 jreleaser {
     signing {

@@ -4,6 +4,9 @@ on:
   push:
     tags:
       - 'v*'
+  # TODO remove this line after testing
+  pull_request:
+    branches: [ "main" ]
   workflow_dispatch:
 
 jobs:
