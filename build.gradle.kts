@@ -96,7 +96,8 @@ tasks.register("downloadOpenApiSpec") {
 
 openApiGenerate {
     generatorName.set("java")
-    inputSpec.set("${project.rootDir}/specs/openapi.yaml")
+    remoteInputSpec.set("https://raw.githubusercontent.com/ntua-unit-of-control-and-informatics/jaqpot-api/refs/heads/main/src/main/resources/openapi.yaml")
+
     outputDir.set("${layout.buildDirectory.get()}")
     configOptions.set(
         mapOf(
