@@ -12,7 +12,7 @@ plugins {
 }
 
 group = "org.jaqpot.kotlin-sdk"
-version = "0.1.0"
+version = "0.1.0-SNAPSHOT"
 
 repositories {
     mavenCentral()
@@ -116,8 +116,8 @@ nexusPublishing {
         sonatype {  // only for users registered in Sonatype after 24 Feb 2021
             nexusUrl.set(uri("https://s01.oss.sonatype.org/service/local/"))
             snapshotRepositoryUrl.set(uri("https://s01.oss.sonatype.org/content/repositories/snapshots/"))
-            username.set(System.getenv("SONATYPE_USERNAME") ?: properties["sonatypeUsername"].toString())
-            password.set(System.getenv("SONATYPE_PASSWORD") ?: properties["sonatypePassword"].toString())
+            username = System.getenv("SONATYPE_USERNAME") ?: properties["sonatypeUsername"].toString()
+            password = System.getenv("SONATYPE_PASSWORD") ?: properties["sonatypePassword"].toString()
         }
     }
 }
@@ -128,7 +128,7 @@ publishing {
             from(components["java"])
             groupId = "org.jaqpot"
             artifactId = "kotlin-sdk"
-            version = "0.1.0"
+            version = "0.1.0-SNAPSHOT"
             pom {
                 name.set("Jaqpot Kotlin SDK")
                 description.set("Java/Kotlin SDK for the Jaqpot API")
