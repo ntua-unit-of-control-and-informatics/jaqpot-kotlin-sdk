@@ -39,7 +39,7 @@ jobs:
           echo "trusted-key ${{ secrets.GPG_KEY_ID }}" > ~/.gnupg/gpg.conf
           
           # Verify key import
-          gpg --list-secret-keys --keyid-format=long
+          gpg --list-secret-keys --keyid-format=short
 
       - name: Download OpenAPI Spec
         run: |
