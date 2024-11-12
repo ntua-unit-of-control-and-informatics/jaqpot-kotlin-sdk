@@ -1,6 +1,7 @@
 // build.gradle.kts
 
 import java.net.URI
+import java.time.Duration
 
 plugins {
     kotlin("jvm") version "1.9.20"
@@ -116,9 +117,13 @@ nexusPublishing {
         sonatype {  // only for users registered in Sonatype after 24 Feb 2021
             nexusUrl.set(uri("https://s01.oss.sonatype.org/service/local/"))
             snapshotRepositoryUrl.set(uri("https://s01.oss.sonatype.org/content/repositories/snapshots/"))
-            username = System.getenv("SONATYPE_USERNAME") ?: properties["sonatypeUsername"].toString()
-            password = System.getenv("SONATYPE_PASSWORD") ?: properties["sonatypePassword"].toString()
+            username.set(System.getenv("SONATYPE_USERNAME") ?: properties["sonatypeUsername"].toString())
+            password.set(System.getenv("SONATYPE_PASSWORD") ?: properties["sonatypePassword"].toString())
         }
+    }
+    transitionCheckOptions {
+        maxRetries.set(20)
+        delayBetween.set(Duration.ofSeconds(5))
     }
 }
 
@@ -168,10 +173,10 @@ publishing {
 }
 
 signing {
-    val signingKeyId = System.getenv("GPG_KEY_ID")
-    val signingKey = System.getenv("GPG_SIGNING_KEY")
-    val signingPassword = System.getenv("GPG_SIGNING_PASSWORD")
-    useInMemoryPgpKeys(signingKeyId, signingKey, signingPassword)
+//    val signingKeyId = System.getenv("GPG_KEY_ID")
+//    val signingKey = System.getenv("GPG_SIGNING_KEY")
+//    val signingPassword = System.getenv("GPG_SIGNING_PASSWORD")
+//    useInMemoryPgpKeys(signingKeyId, signingKey, signingPassword)
     sign(publishing.publications["mavenJava"])
 }
 
