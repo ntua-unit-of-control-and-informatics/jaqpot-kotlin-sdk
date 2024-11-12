@@ -1,19 +1,17 @@
 // build.gradle.kts
 
-import java.net.URI
-import java.time.Duration
-
 plugins {
     kotlin("jvm") version "1.9.20"
     `java-library`
+    application
     `maven-publish`
     signing
-    id("io.github.gradle-nexus.publish-plugin") version "1.3.0"
     id("org.openapi.generator") version "7.9.0"
+    id("org.jreleaser") version "1.15.0"
 }
 
-group = "org.jaqpot.kotlin-sdk"
-version = "0.1.0-SNAPSHOT"
+group = "org.jaqpot.kotlinsdk"
+version = "0.1.0"
 
 repositories {
     mavenCentral()
@@ -37,9 +35,9 @@ dependencies {
     testImplementation("com.squareup.okhttp3:mockwebserver:4.12.0")
 }
 
-
-
-
+tasks.compileKotlin {
+    dependsOn(tasks.openApiGenerate)
+}
 tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
     kotlinOptions {
         jvmTarget = "11"
@@ -55,20 +53,6 @@ sourceSets {
     }
 }
 
-tasks.create<Jar>("sourcesJar") {
-    archiveClassifier.set("sources")
-    from(sourceSets.main.get().allSource)
-    dependsOn("openApiGenerate")
-}
-
-tasks.compileKotlin {
-    dependsOn(tasks.openApiGenerate)
-}
-
-tasks.openApiGenerate {
-    mustRunAfter("downloadOpenApiSpec")
-}
-
 java {
     withJavadocJar()
     withSourcesJar()
@@ -76,29 +60,9 @@ java {
     targetCompatibility = JavaVersion.VERSION_11
 }
 
-tasks.register("downloadOpenApiSpec") {
-    doLast {
-        val specsDir = file("${project.rootDir}/specs")
-        specsDir.mkdirs()
-
-        val specFile = file("${specsDir}/openapi.yaml")
-        val url =
-            URI("https://raw.githubusercontent.com/ntua-unit-of-control-and-informatics/jaqpot-api/refs/heads/main/src/main/resources/openapi.yaml")
-                .toURL()
-
-        specFile.writeText(
-            url.openStream().bufferedReader().useLines { lines ->
-                lines.filter { !it.contains("x-field-extra-annotation:") }
-                    .joinToString("\n")
-            }
-        )
-    }
-}
-
 openApiGenerate {
     generatorName.set("java")
     remoteInputSpec.set("https://raw.githubusercontent.com/ntua-unit-of-control-and-informatics/jaqpot-api/refs/heads/main/src/main/resources/openapi.yaml")
-
     outputDir.set("${layout.buildDirectory.get()}")
     configOptions.set(
         mapOf(
@@ -111,51 +75,67 @@ openApiGenerate {
     )
 }
 
-// Configures publishing to Maven Central
-nexusPublishing {
-    repositories {
-        sonatype {  // only for users registered in Sonatype after 24 Feb 2021
-            nexusUrl.set(uri("https://s01.oss.sonatype.org/service/local/"))
-            snapshotRepositoryUrl.set(uri("https://s01.oss.sonatype.org/content/repositories/snapshots/"))
-            username.set(System.getenv("SONATYPE_USERNAME") ?: properties["sonatypeUsername"].toString())
-            password.set(System.getenv("SONATYPE_PASSWORD") ?: properties["sonatypePassword"].toString())
+// Publishing
+jreleaser {
+    signing {
+        setActive("ALWAYS")
+        armored = true
+    }
+    project {
+        authors.set(listOf("UPCI NTUA"))
+        license.set("MIT")
+        links {
+            homepage = "https://api.jaqpot.org"
+        }
+        inceptionYear = "2024"
+    }
+
+    deploy {
+        maven {
+            mavenCentral {
+                register("app") {
+                    setActive("ALWAYS")
+                    url.set("https://central.sonatype.com/api/v1/publisher")
+                    stagingRepository("target/staging-deploy")
+                    username = System.getenv("SONATYPE_USERNAME")
+                    password = System.getenv("SONATYPE_PASSWORD")
+                }
+            }
         }
     }
-    transitionCheckOptions {
-        maxRetries.set(20)
-        delayBetween.set(Duration.ofSeconds(5))
+
+
+    distributions {
+        register("app") {
+            artifact {
+                path.set(file("build/distributions/{{distributionName}}-{{projectVersion}}.zip"))
+            }
+        }
     }
 }
+
 
 publishing {
     publications {
         create<MavenPublication>("mavenJava") {
+            artifactId = "jaqpot-kotlin-sdk"
             from(components["java"])
-            groupId = "org.jaqpot"
-            artifactId = "kotlin-sdk"
-            version = "0.1.0-SNAPSHOT"
             pom {
                 name.set("Jaqpot Kotlin SDK")
                 description.set("Java/Kotlin SDK for the Jaqpot API")
                 url.set("https://github.com/ntua-unit-of-control-and-informatics/jaqpot-kotlin-sdk")
                 licenses {
                     license {
-                        name.set("MIT License")
-                        url.set("https://opensource.org/licenses/MIT")
-                        distribution.set("repo")
+                        name.set("The Apache License, Version 2.0")
+                        url.set("http://www.apache.org/licenses/LICENSE-2.0.txt")
                     }
                 }
                 developers {
                     developer {
-                        id.set("upci")
-                        name.set("Alex Arvanitidis")
-                        email.set("upci.ntua@gmail.com")
+                        id.set("your-username")
+                        name.set("Your Name")
+                        email.set("your.email@example.com")
                     }
-                }
-                scm {
-                    connection.set("scm:git:git://github.com/ntua-unit-of-control-and-informatics/jaqpot-kotlin-sdk.git")
-                    developerConnection.set("scm:git:ssh://github.com:ntua-unit-of-control-and-informatics/jaqpot-kotlin-sdk.git")
-                    url.set("https://github.com/ntua-unit-of-control-and-informatics/jaqpot-kotlin-sdk")
                 }
             }
         }
@@ -173,10 +153,6 @@ publishing {
 }
 
 signing {
-//    val signingKeyId = System.getenv("GPG_KEY_ID")
-//    val signingKey = System.getenv("GPG_SIGNING_KEY")
-//    val signingPassword = System.getenv("GPG_SIGNING_PASSWORD")
-//    useInMemoryPgpKeys(signingKeyId, signingKey, signingPassword)
     sign(publishing.publications["mavenJava"])
 }
 
