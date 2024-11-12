@@ -104,8 +104,8 @@ jreleaser {
                     setActive("ALWAYS")
                     url.set("https://central.sonatype.com/api/v1/publisher")
                     stagingRepository("target/staging-deploy")
-                    username = System.getenv("JRELEASER_MAVENCENTRAL_USERNAME")
-                    password = System.getenv("JRELEASER_MAVENCENTRAL_TOKEN")
+                    username = System.getenv("SONATYPE_USERNAME")
+                    password = System.getenv("SONATYPE_PASSWORD")
                 }
             }
         }
@@ -153,8 +153,8 @@ publishing {
             name = "OSSRH"
             url = uri("https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/")
             credentials {
-                username = System.getenv("JRELEASER_MAVENCENTRAL_USERNAME")
-                password = System.getenv("JRELEASER_MAVENCENTRAL_TOKEN")
+                username = System.getenv("SONATYPE_PASSWORD")
+                password = System.getenv("SONATYPE_PASSWORD")
             }
         }
     }
