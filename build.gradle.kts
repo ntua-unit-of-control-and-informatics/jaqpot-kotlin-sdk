@@ -77,18 +77,15 @@ java {
 
 tasks.register("downloadOpenApiSpec") {
     doLast {
-        // Create temporary directory if it doesn't exist
-        val tmpDir = file("${layout.buildDirectory.get()}/tmp")
-        tmpDir.mkdirs()
+        val specsDir = file("${project.rootDir}/specs")
+        specsDir.mkdirs()
 
-        // Download and process the file
-        val tempFile = file("${layout.buildDirectory.get()}/tmp/openapi.yaml")
+        val specFile = file("${specsDir}/openapi.yaml")
         val url =
             URI("https://raw.githubusercontent.com/ntua-unit-of-control-and-informatics/jaqpot-api/refs/heads/main/src/main/resources/openapi.yaml")
                 .toURL()
 
-        // Download and filter in one go
-        tempFile.writeText(
+        specFile.writeText(
             url.openStream().bufferedReader().useLines { lines ->
                 lines.filter { !it.contains("x-field-extra-annotation:") }
                     .joinToString("\n")
@@ -99,7 +96,7 @@ tasks.register("downloadOpenApiSpec") {
 
 openApiGenerate {
     generatorName.set("java")
-    inputSpec.set("${layout.buildDirectory.get()}/tmp/openapi.yaml")
+    inputSpec.set("${project.rootDir}/specs/openapi.yaml")
     outputDir.set("${layout.buildDirectory.get()}")
     configOptions.set(
         mapOf(

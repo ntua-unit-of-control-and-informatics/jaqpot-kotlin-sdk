@@ -50,6 +50,7 @@ jobs:
         run: |
           # Print file location again
           ls -la build/tmp/
+          pwd
           ./gradlew openApiGenerate --info
           ./gradlew build
           ./gradlew publishToSonatype closeSonatypeStagingRepository
