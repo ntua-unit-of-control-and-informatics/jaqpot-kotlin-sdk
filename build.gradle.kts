@@ -104,6 +104,7 @@ jreleaser {
                     stagingRepository("${layout.buildDirectory.get()}/staging-deploy")
                     username = System.getenv("SONATYPE_USERNAME")
                     password = System.getenv("SONATYPE_PASSWORD")
+                    applyMavenCentralRules = true
                 }
             }
         }
