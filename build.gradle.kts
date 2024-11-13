@@ -111,7 +111,7 @@ jreleaser {
 
 
     distributions {
-        register("kotlin-sdk") {
+        register("jaqpot-kotlin-sdk") {
             artifact {
                 path.set(file("build/distributions/{{distributionName}}-{{projectVersion}}.zip"))
             }
