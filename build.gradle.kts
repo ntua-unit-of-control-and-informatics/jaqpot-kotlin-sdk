@@ -10,7 +10,7 @@ plugins {
     id("org.jreleaser") version "1.15.0"
 }
 
-group = "org.jaqpot.kotlinsdk"
+group = "org.jaqpot"
 version = "0.3.0"
 
 repositories {
@@ -183,10 +183,4 @@ publishing {
     }
 }
 
-//signing {
-//    val signingKey = System.getenv("JRELEASER_GPG_SECRET_KEY")
-//    val signingPassword = System.getenv("JRELEASER_GPG_PASSPHRASE")
-//    useInMemoryPgpKeys(signingKey, signingPassword)
-//    sign(publishing.publications["mavenJava"])
-//}
 
