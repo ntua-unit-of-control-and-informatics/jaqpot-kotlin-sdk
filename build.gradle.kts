@@ -10,7 +10,7 @@ plugins {
     id("org.jreleaser") version "1.15.0"
 }
 
-group = "org.jaqpot.kotlinsdk"
+group = "org.jaqpot"
 version = "0.1.0"
 
 repositories {
@@ -111,7 +111,7 @@ jreleaser {
 
 
     distributions {
-        register("jaqpot-kotlin-sdk") {
+        register("kotlin-sdk") {
             artifact {
                 path.set(file("build/distributions/{{distributionName}}-{{projectVersion}}.zip"))
             }
@@ -123,12 +123,12 @@ jreleaser {
 publishing {
     publications {
         create<MavenPublication>("mavenJava") {
-            artifactId = "jaqpot-kotlin-sdk"
+            artifactId = "kotlin-sdk"
             from(components["java"])
             pom {
                 name.set("Jaqpot Kotlin SDK")
                 description.set("Java/Kotlin SDK for the Jaqpot API")
-                url.set("https://github.com/ntua-unit-of-control-and-informatics/jaqpot-kotlin-sdk")
+                url.set("https://github.com/ntua-unit-of-control-and-informatics/kotlin-sdk")
                 licenses {
                     license {
                         name.set("MIT License")
