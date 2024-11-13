@@ -113,10 +113,31 @@ jreleaser {
                 register("sonatype") {
                     setActive("ALWAYS")
                     url.set("https://central.sonatype.com/api/v1/publisher")
+                    checksum {
+                        // The name of the grouping checksums file.
+                        // Defaults to `checksums.txt`.
+                        //
+                        name.set("{{projectName}}-{{projectVersion}}_checksums.txt")
+
+                        // Uploads individual checksum files.
+                        // Defaults to `false`.
+                        //
+                        individual = true
+
+                        // Whether to checksum artifacts in the `distributions` section or not.
+                        // Defaults to `true`.
+                        //
+                        artifacts = true
+
+                        // Whether to checksum files in the `files` section or not.
+                        // Defaults to `true`.
+                        //
+                        files = true
+                    }
                     stagingRepository("${layout.buildDirectory.get()}/staging-deploy")
                     username = System.getenv("SONATYPE_USERNAME")
                     password = System.getenv("SONATYPE_PASSWORD")
-                    applyMavenCentralRules = true
+                    applyMavenCentralRules.set(true)
                     verifyPom = true
                 }
             }
@@ -162,10 +183,10 @@ publishing {
     }
 }
 
-signing {
-    val signingKey = System.getenv("JRELEASER_GPG_SECRET_KEY")
-    val signingPassword = System.getenv("JRELEASER_GPG_PASSPHRASE")
-    useInMemoryPgpKeys(signingKey, signingPassword)
-    sign(publishing.publications["mavenJava"])
-}
+//signing {
+//    val signingKey = System.getenv("JRELEASER_GPG_SECRET_KEY")
+//    val signingPassword = System.getenv("JRELEASER_GPG_PASSPHRASE")
+//    useInMemoryPgpKeys(signingKey, signingPassword)
+//    sign(publishing.publications["mavenJava"])
+//}
 
