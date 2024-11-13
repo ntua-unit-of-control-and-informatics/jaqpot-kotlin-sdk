@@ -157,7 +157,6 @@ publishing {
     }
     repositories {
         maven {
-            0
             url = layout.buildDirectory.dir("staging-deploy").get().asFile.toURI()
         }
     }
