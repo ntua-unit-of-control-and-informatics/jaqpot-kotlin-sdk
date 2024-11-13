@@ -1,6 +1,6 @@
 # Jaqpot Kotlin/Java SDK
 
-Gradle plugin to help you interact with the [Jaqpot API](https://jaqpot.org/docs/jaqpot-api) using Java/Kotlin.
+Kotlin library to help you interact with the [Jaqpot API](https://jaqpot.org/docs/jaqpot-api) using Java/Kotlin.
 
 ## Installation
 
