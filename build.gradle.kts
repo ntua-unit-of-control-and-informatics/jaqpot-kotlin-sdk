@@ -79,20 +79,32 @@ openApiGenerate {
 tasks.getByName("openApiGenerate").dependsOn(tasks.named<Jar>("sourcesJar"))
 
 
-// Publishing
 jreleaser {
     signing {
         setActive("ALWAYS")
         armored = true
     }
-    project {
-        authors.set(listOf("UPCI NTUA"))
-        license.set("MIT")
-        links {
-            homepage = "https://api.jaqpot.org"
-        }
-        description.set("An SDK in Kotlin/Java to access the Jaqpot API (https://api.jaqpot.org)")
-        inceptionYear = "2024"
+
+    checksum {
+        // The name of the grouping checksums file.
+        // Defaults to `checksums.txt`.
+        //
+        name.set("{{projectName}}-{{projectVersion}}_checksums.txt")
+
+        // Uploads individual checksum files.
+        // Defaults to `false`.
+        //
+        individual = true
+
+        // Whether to checksum artifacts in the `distributions` section or not.
+        // Defaults to `true`.
+        //
+        artifacts = true
+
+        // Whether to checksum files in the `files` section or not.
+        // Defaults to `true`.
+        //
+        files = true
     }
 
     deploy {
@@ -105,21 +117,12 @@ jreleaser {
                     username = System.getenv("SONATYPE_USERNAME")
                     password = System.getenv("SONATYPE_PASSWORD")
                     applyMavenCentralRules = true
+                    verifyPom = true
                 }
             }
         }
     }
-
-
-    distributions {
-        register("jaqpot-kotlin-sdk") {
-            artifact {
-                path.set(file("build/distributions/{{distributionName}}-{{projectVersion}}.zip"))
-            }
-        }
-    }
 }
-
 
 publishing {
     publications {
@@ -154,6 +157,7 @@ publishing {
     }
     repositories {
         maven {
+            0
             url = layout.buildDirectory.dir("staging-deploy").get().asFile.toURI()
         }
     }
