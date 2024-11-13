@@ -10,7 +10,7 @@ plugins {
     id("org.jreleaser") version "1.15.0"
 }
 
-group = "org.jaqpot.kotlinsdk"
+group = "org.jaqpot"
 version = "0.3.0"
 
 repositories {
