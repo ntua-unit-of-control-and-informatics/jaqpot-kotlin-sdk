@@ -75,84 +75,97 @@ openApiGenerate {
     )
 }
 
-// Publishing
+
+tasks.getByName("openApiGenerate").dependsOn(tasks.named<Jar>("sourcesJar"))
+
+
 jreleaser {
     signing {
         setActive("ALWAYS")
         armored = true
     }
-    project {
-        authors.set(listOf("UPCI NTUA"))
-        license.set("MIT")
-        links {
-            homepage = "https://api.jaqpot.org"
-        }
-        inceptionYear = "2024"
+
+    checksum {
+        // The name of the grouping checksums file.
+        // Defaults to `checksums.txt`.
+        //
+        name.set("{{projectName}}-{{projectVersion}}_checksums.txt")
+
+        // Uploads individual checksum files.
+        // Defaults to `false`.
+        //
+        individual = true
+
+        // Whether to checksum artifacts in the `distributions` section or not.
+        // Defaults to `true`.
+        //
+        artifacts = true
+
+        // Whether to checksum files in the `files` section or not.
+        // Defaults to `true`.
+        //
+        files = true
     }
 
     deploy {
         maven {
             mavenCentral {
-                register("app") {
+                register("sonatype") {
                     setActive("ALWAYS")
                     url.set("https://central.sonatype.com/api/v1/publisher")
-                    stagingRepository("target/staging-deploy")
+                    stagingRepository("${layout.buildDirectory.get()}/staging-deploy")
                     username = System.getenv("SONATYPE_USERNAME")
                     password = System.getenv("SONATYPE_PASSWORD")
+                    applyMavenCentralRules = true
+                    verifyPom = true
                 }
-            }
-        }
-    }
-
-
-    distributions {
-        register("app") {
-            artifact {
-                path.set(file("build/distributions/{{distributionName}}-{{projectVersion}}.zip"))
             }
         }
     }
 }
 
-
 publishing {
     publications {
         create<MavenPublication>("mavenJava") {
-            artifactId = "jaqpot-kotlin-sdk"
+            artifactId = "kotlin-sdk"
             from(components["java"])
             pom {
                 name.set("Jaqpot Kotlin SDK")
                 description.set("Java/Kotlin SDK for the Jaqpot API")
-                url.set("https://github.com/ntua-unit-of-control-and-informatics/jaqpot-kotlin-sdk")
+                url.set("https://github.com/ntua-unit-of-control-and-informatics/kotlin-sdk")
                 licenses {
                     license {
-                        name.set("The Apache License, Version 2.0")
-                        url.set("http://www.apache.org/licenses/LICENSE-2.0.txt")
+                        name.set("MIT License")
+                        url.set("https://opensource.org/licenses/MIT")
+                        distribution.set("repo")
                     }
                 }
                 developers {
                     developer {
-                        id.set("your-username")
-                        name.set("Your Name")
-                        email.set("your.email@example.com")
+                        id.set("upci")
+                        name.set("Alex Arvanitidis")
+                        email.set("upci.ntua@gmail.com")
                     }
+                }
+                scm {
+                    connection.set("scm:git:git://github.com/ntua-unit-of-control-and-informatics/jaqpot-kotlin-sdk.git")
+                    developerConnection.set("scm:git:ssh://github.com:ntua-unit-of-control-and-informatics/jaqpot-kotlin-sdk.git")
+                    url.set("https://github.com/ntua-unit-of-control-and-informatics/jaqpot-kotlin-sdk")
                 }
             }
         }
     }
     repositories {
         maven {
-            name = "OSSRH"
-            url = uri("https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/")
-            credentials {
-                username = System.getenv("OSSRH_USERNAME")
-                password = System.getenv("OSSRH_PASSWORD")
-            }
+            url = layout.buildDirectory.dir("staging-deploy").get().asFile.toURI()
         }
     }
 }
 
 signing {
+    val signingKey = System.getenv("JRELEASER_GPG_SECRET_KEY")
+    val signingPassword = System.getenv("JRELEASER_GPG_PASSPHRASE")
+    useInMemoryPgpKeys(signingKey, signingPassword)
     sign(publishing.publications["mavenJava"])
 }
 
