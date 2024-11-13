@@ -1,6 +1,6 @@
 # Jaqpot Kotlin/Java SDK
 
-Gradle plugin to help you interact with the Jaqpot API using Java/Kotlin.
+Gradle plugin to help you interact with the [Jaqpot API](https://jaqpot.org/docs/jaqpot-api) using Java/Kotlin.
 
 ## Installation
 
@@ -9,18 +9,24 @@ Add this dependency to your project:
 Gradle (Kotlin DSL)
 
 ```kotlin
-id("org.jaqpot.kotlin-sdk") version "0.3.0"
+implementation("org.jaqpot:kotlin-sdk:0.3.0")
 ```
 
-Gradle (Groovy)
+Maven
 
-```groovy
-id 'org.jaqpot.kotlin-sdk' version '0.3.0'
+```maven
+<dependency>
+    <groupId>org.jaqpot</groupId>
+    <artifactId>kotlin-sdk</artifactId>
+    <version>0.3.0</version>
+</dependency>
 ``` 
 
 ## Usage
 
-In java code, you can use the generated client like this:
+To use the SDK you'll need to generate the Jaqpot API keys, following the guide [here](https://jaqpot.org/docs/jaqpot-api/authentication/create-an-api-key)
+
+In Java, you can use the generated client like this:
 
 ```java
 ModelApiClient modelApiClient = new ModelApiClient(System.getenv("JAQPOT_API_KEY"), System.getenv("JAQPOT_API_SECRET"));
