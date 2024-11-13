@@ -9,13 +9,13 @@ Add this dependency to your project:
 Gradle (Kotlin DSL)
 
 ```kotlin
-id("org.jaqpot.kotlin-sdk") version "0.2.0"
+id("org.jaqpot.kotlin-sdk") version "0.4.0"
 ```
 
 Gradle (Groovy)
 
 ```groovy
-id 'org.jaqpot.kotlin-sdk' version '0.2.0'
+id 'org.jaqpot.kotlin-sdk' version '0.3.0'
 ``` 
 
 ## Usage
