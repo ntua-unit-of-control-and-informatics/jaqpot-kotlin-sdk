@@ -98,7 +98,7 @@ jreleaser {
     deploy {
         maven {
             mavenCentral {
-                register("app") {
+                register("sonatype") {
                     setActive("ALWAYS")
                     url.set("https://central.sonatype.com/api/v1/publisher")
                     stagingRepository("${layout.buildDirectory.get()}/staging-deploy")
