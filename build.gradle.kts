@@ -10,8 +10,8 @@ plugins {
     id("org.jreleaser") version "1.15.0"
 }
 
-group = "org.jaqpot"
-version = "0.1.0"
+group = "org.jaqpot.kotlinsdk"
+version = "0.2.0"
 
 repositories {
     mavenCentral()

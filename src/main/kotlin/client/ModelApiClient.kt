@@ -1,7 +1,6 @@
 package org.jaqpot.client
 
 import client.BaseApiClient
-import org.jaqpot.config.SDKConfig
 import org.jaqpot.exception.JaqpotSDKException
 import org.openapitools.client.api.DatasetApi
 import org.openapitools.client.api.ModelApi
@@ -12,9 +11,8 @@ import retrofit2.Call
 
 class ModelApiClient(
     apiKey: String,
-    apiSecret: String,
-    baseUrl: String = SDKConfig.host
-) : BaseApiClient(apiKey, apiSecret, baseUrl) {
+    apiSecret: String
+) : BaseApiClient(apiKey, apiSecret) {
 
     private val modelApi: ModelApi = retrofit.create(ModelApi::class.java)
     private val datasetApi: DatasetApi = retrofit.create(DatasetApi::class.java)
