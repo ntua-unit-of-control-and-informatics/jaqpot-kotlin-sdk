@@ -12,9 +12,8 @@ import java.time.OffsetDateTime
 
 
 open class BaseApiClient protected constructor(
-    private val apiKey: String,
-    private val apiSecret: String,
-    private val baseUrl: String = SDKConfig.host
+    apiKey: String,
+    apiSecret: String
 ) {
 
     private val authorizationInterceptor = AuthorizationInterceptor(apiKey, apiSecret)
@@ -27,7 +26,7 @@ open class BaseApiClient protected constructor(
         .create()
 
     protected val retrofit: Retrofit = Retrofit.Builder()
-        .baseUrl(baseUrl)
+        .baseUrl(SDKConfig.host)
         .client(httpClient)
         .addConverterFactory(GsonConverterFactory.create(gson))
         .build()
