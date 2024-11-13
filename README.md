@@ -1,4 +1,4 @@
-# Kotlin Spring OpenAPI Generator
+# Jaqpot Kotlin/Java SDK
 
 Gradle plugin to help you interact with the Jaqpot API using Java/Kotlin.
 
@@ -9,7 +9,7 @@ Add this dependency to your project:
 Gradle (Kotlin DSL)
 
 ```kotlin
-id("org.jaqpot.kotlin-sdk") version "0.4.0"
+id("org.jaqpot.kotlin-sdk") version "0.3.0"
 ```
 
 Gradle (Groovy)
@@ -24,9 +24,7 @@ In java code, you can use the generated client like this:
 
 ```java
 ModelApiClient modelApiClient = new ModelApiClient(System.getenv("JAQPOT_API_KEY"), System.getenv("JAQPOT_API_SECRET"));
-System.out.
-
-        Dataset dataset = modelApiClient
+Dataset dataset = modelApiClient
         .predictSync(
                 modelId,
                 List.of(
@@ -35,7 +33,7 @@ System.out.
         );
 ```
 
-In Kotlin:
+or in Kotlin:
 
 ```kotlin
 val modelApiClient = ModelApiClient(System.getenv("JAQPOT_API_KEY"), System.getenv("JAQPOT_API_SECRET"))
