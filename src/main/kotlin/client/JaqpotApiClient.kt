@@ -3,6 +3,7 @@ package org.jaqpot.client
 import org.jaqpot.exception.JaqpotSDKException
 import org.jaqpot.http.JaqpotHttpClient
 import org.openapitools.client.api.DatasetApi
+import org.openapitools.client.api.FeatureApi
 import org.openapitools.client.api.ModelApi
 import org.openapitools.client.model.Dataset
 import org.openapitools.client.model.DatasetType
@@ -11,8 +12,9 @@ import org.openapitools.client.model.DatasetType
 class JaqpotApiClient(private val apiKey: String, private val apiSecret: String) {
 
     private val jaqpotHttpClient: JaqpotHttpClient = JaqpotHttpClient(apiKey, apiSecret)
-    private val modelApi: ModelApi = jaqpotHttpClient.retrofit.create(ModelApi::class.java)
-    private val datasetApi: DatasetApi = jaqpotHttpClient.retrofit.create(DatasetApi::class.java)
+    val modelApi: ModelApi = jaqpotHttpClient.retrofit.create(ModelApi::class.java)
+    val datasetApi: DatasetApi = jaqpotHttpClient.retrofit.create(DatasetApi::class.java)
+    val featureApi: FeatureApi = jaqpotHttpClient.retrofit.create(FeatureApi::class.java)
 
     companion object {
         const val DATASET_CHECK_INTERVAL: Long = 2000
