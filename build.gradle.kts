@@ -32,6 +32,7 @@ dependencies {
     implementation("com.squareup.okio:okio:3.4.0")
 
     testImplementation("org.junit.jupiter:junit-jupiter:5.10.0")
+    testImplementation("org.mockito:mockito-core:5.14.2")
     testImplementation("com.squareup.okhttp3:mockwebserver:4.12.0")
 }
 
@@ -43,6 +44,10 @@ tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
         jvmTarget = "11"
         freeCompilerArgs = listOf("-Xjsr305=strict")
     }
+}
+
+tasks.test {
+    useJUnitPlatform()
 }
 
 sourceSets {

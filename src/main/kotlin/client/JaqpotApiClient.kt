@@ -1,21 +1,18 @@
 package org.jaqpot.client
 
-import client.BaseApiClient
 import org.jaqpot.exception.JaqpotSDKException
+import org.jaqpot.http.JaqpotHttpClient
 import org.openapitools.client.api.DatasetApi
 import org.openapitools.client.api.ModelApi
 import org.openapitools.client.model.Dataset
 import org.openapitools.client.model.DatasetType
 
 
-class ModelApiClient(
-    apiKey: String,
-    apiSecret: String
-) : BaseApiClient(apiKey, apiSecret) {
+class JaqpotApiClient(private val apiKey: String, private val apiSecret: String) {
 
-    val modelApi: ModelApi = retrofit.create(ModelApi::class.java)
-        get() = field
-    private val datasetApi: DatasetApi = retrofit.create(DatasetApi::class.java)
+    private val jaqpotHttpClient: JaqpotHttpClient = JaqpotHttpClient(apiKey, apiSecret)
+    private val modelApi: ModelApi = jaqpotHttpClient.retrofit.create(ModelApi::class.java)
+    private val datasetApi: DatasetApi = jaqpotHttpClient.retrofit.create(DatasetApi::class.java)
 
     companion object {
         const val DATASET_CHECK_INTERVAL: Long = 2000

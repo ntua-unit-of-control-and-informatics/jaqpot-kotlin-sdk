@@ -1,4 +1,4 @@
-package client
+package org.jaqpot.http
 
 import auth.AuthorizationInterceptor
 import com.google.gson.Gson
@@ -11,7 +11,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 import java.time.OffsetDateTime
 
 
-open class BaseApiClient protected constructor(
+class JaqpotHttpClient(
     apiKey: String,
     apiSecret: String
 ) {
@@ -21,11 +21,11 @@ open class BaseApiClient protected constructor(
         .addInterceptor(authorizationInterceptor)
         .build()
 
-    protected val gson: Gson = GsonBuilder()
+    private val gson: Gson = GsonBuilder()
         .registerTypeAdapter(OffsetDateTime::class.java, JSON.OffsetDateTimeTypeAdapter())
         .create()
 
-    protected val retrofit: Retrofit = Retrofit.Builder()
+    val retrofit: Retrofit = Retrofit.Builder()
         .baseUrl(SDKConfig.host)
         .client(httpClient)
         .addConverterFactory(GsonConverterFactory.create(gson))
