@@ -9,7 +9,7 @@ Add this dependency to your project:
 Gradle (Kotlin DSL)
 
 ```kotlin
-implementation("org.jaqpot:kotlin-sdk:0.3.0")
+implementation("org.jaqpot:kotlin-sdk:0.4.0")
 ```
 
 Maven
@@ -18,13 +18,14 @@ Maven
 <dependency>
     <groupId>org.jaqpot</groupId>
     <artifactId>kotlin-sdk</artifactId>
-    <version>0.3.0</version>
+    <version>0.4.0</version>
 </dependency>
 ``` 
 
 ## Usage
 
-To use the SDK you'll need to generate the Jaqpot API keys, following the guide [here](https://jaqpot.org/docs/jaqpot-api/authentication/create-an-api-key)
+To use the SDK you'll need to generate the Jaqpot API keys, following the
+guide [here](https://jaqpot.org/docs/jaqpot-api/authentication/create-an-api-key)
 
 In Java, you can use the generated client like this:
 
