@@ -30,21 +30,22 @@ guide [here](https://jaqpot.org/docs/jaqpot-api/authentication/create-an-api-key
 In Java, you can use the generated client like this:
 
 ```java
-ModelApiClient modelApiClient = new ModelApiClient(System.getenv("JAQPOT_API_KEY"), System.getenv("JAQPOT_API_SECRET"));
-Dataset dataset = modelApiClient
+JaqpotApiClient jaqpotApiClient = new JaqpotApiClient(System.getenv("JAQPOT_API_KEY"), System.getenv("JAQPOT_API_SECRET"));
+Dataset dataset = jaqpotApiClient
         .predictSync(
                 modelId,
                 List.of(
                         Map.of("X1", "1", "X2", "2", "X3", "3", "X4", "4")
                 )
         );
+System.out.println(dataset)
 ```
 
 or in Kotlin:
 
 ```kotlin
-val modelApiClient = ModelApiClient(System.getenv("JAQPOT_API_KEY"), System.getenv("JAQPOT_API_SECRET"))
-val dataset = modelApiClient.predictSync(
+val jaqpotApiClient = JaqpotApiClient(System.getenv("JAQPOT_API_KEY"), System.getenv("JAQPOT_API_SECRET"))
+val dataset = jaqpotApiClient.predictSync(
     modelId,
     listOf(
         mapOf("X1" to "1", "X2" to "2", "X3" to "3", "X4" to "4")
