@@ -14,7 +14,7 @@ implementation("org.jaqpot:kotlin-sdk:0.4.0")
 
 Maven
 
-```maven
+```xml
 <dependency>
     <groupId>org.jaqpot</groupId>
     <artifactId>kotlin-sdk</artifactId>
