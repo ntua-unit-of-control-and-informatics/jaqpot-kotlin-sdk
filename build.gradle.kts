@@ -10,8 +10,8 @@ plugins {
     id("org.jreleaser") version "1.15.0"
 }
 
-group = "org.jaqpot"
-version = "0.4.0"
+group = "org.jaqpot.kotlinsdk"
+version = "0.3.1"
 
 repositories {
     mavenCentral()
@@ -156,8 +156,8 @@ publishing {
             artifactId = "kotlin-sdk"
             from(components["java"])
             pom {
-                name.set("Jaqpot Kotlin SDK")
-                description.set("Java/Kotlin SDK for the Jaqpot API")
+                name.set("DEPRECATED - Use org.jaqpot:kotlin-sdk instead")
+                description.set("DEPRECATED - This artifact is deprecated. Please use org.jaqpot:kotlin-sdk artifact instead.")
                 url.set("https://github.com/ntua-unit-of-control-and-informatics/kotlin-sdk")
                 licenses {
                     license {
