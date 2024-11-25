@@ -1,3 +1,5 @@
+[![Java CI with Gradle](https://github.com/ntua-unit-of-control-and-informatics/jaqpot-kotlin-sdk/actions/workflows/build.yml/badge.svg)](https://github.com/ntua-unit-of-control-and-informatics/jaqpot-kotlin-sdk/actions/workflows/build.yml)
+
 # Jaqpot Kotlin/Java SDK
 
 Kotlin library to help you interact with the [Jaqpot API](https://jaqpot.org/docs/jaqpot-api) using Java/Kotlin.
