@@ -3,6 +3,7 @@ package client
 import org.jaqpot.client.JaqpotApiClient
 import org.jaqpot.config.SDKConfig
 import org.jaqpot.exception.JaqpotSDKException
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.openapitools.client.model.ApiKey
 import org.openapitools.client.model.CreateApiKey201Response
@@ -22,6 +23,7 @@ import org.openapitools.client.model.CreateApiKey201Response
 class ApiKeyCreationIntegrationTest {
 
     @Test
+    @Disabled("Integration test - requires valid API credentials and should be run manually")
     fun `test API key creation with different configurations`() {
         // Get credentials from environment variables
         val apiKey = System.getenv("JAQPOT_API_KEY")
