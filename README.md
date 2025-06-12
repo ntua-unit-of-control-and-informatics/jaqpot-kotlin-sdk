@@ -11,7 +11,7 @@ Add this dependency to your project:
 Gradle (Kotlin DSL)
 
 ```kotlin
-implementation("org.jaqpot:kotlin-sdk:0.4.0")
+implementation("org.jaqpot:kotlin-sdk:0.5.0")
 ```
 
 Maven
@@ -20,7 +20,7 @@ Maven
 <dependency>
     <groupId>org.jaqpot</groupId>
     <artifactId>kotlin-sdk</artifactId>
-    <version>0.4.0</version>
+    <version>0.5.0</version>
 </dependency>
 ``` 
 
